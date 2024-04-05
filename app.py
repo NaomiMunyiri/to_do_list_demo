@@ -31,3 +31,8 @@ def login():
         
     else:
         return None
+
+#get users
+@app.route('/app/v1/users/',methods=['GET'])
+def get_user():
+    return jsonify(users)
