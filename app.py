@@ -20,3 +20,14 @@ def register():
     new_user={'userName':userName,'password':password}
     users.update(new_user)
     return {"message":"User successfully authenticated", "status":201, "data":users}
+
+#login user
+@app.route('/app/v1/login/',methods=['POST'])
+def login():
+    data=request.get_json()
+    password=data.get('password')
+    if "userName" in users and password==users.get("password"):
+        return {"message":"User successfully authenticated", "status":200}
+        
+    else:
+        return None
