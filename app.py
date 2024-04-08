@@ -50,3 +50,7 @@ def create_task():
     tasks.update(new_task)
     return {"message":"Task successfully added", "status":201, "data":tasks}
 
+#get tasks
+@app.route('/app/v1/get_tasks/',methods=['GET'])
+def get_task():
+    return jsonify(tasks)
