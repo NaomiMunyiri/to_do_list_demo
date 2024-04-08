@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify, session
 app = Flask(__name__) #instance of flask
 
 users={'userName':'naomi','password':'admin'}
-
+tasks={'taskId':1,'taskName':'clean','status':'complete'}
 
 #ROUTES
 #register user
@@ -36,3 +36,17 @@ def login():
 @app.route('/app/v1/users/',methods=['GET'])
 def get_user():
     return jsonify(users)
+
+#create tasks
+@app.route('/app/v1/create_tasks/',methods=['POST'])
+def create_task():
+    data=request.get_json()
+
+    taskId=data.get('taskId')
+    taskName=data.get('taskName')
+    status=data.get('status')
+
+    new_task={'taskId':taskId,'taskName':taskName,'status':status}
+    tasks.update(new_task)
+    return {"message":"Task successfully added", "status":201, "data":tasks}
+
