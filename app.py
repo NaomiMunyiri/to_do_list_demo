@@ -3,7 +3,11 @@ from flask import Flask, request, jsonify, session
 app = Flask(__name__) #instance of flask
 
 users={'userName':'naomi','password':'admin'}
-tasks={'taskId':1,'taskName':'clean','status':'complete'}
+tasks={
+        'taskId':1,
+        'taskName':'clean',
+        'status':'complete'
+    }
 
 #ROUTES
 #register user
@@ -70,6 +74,20 @@ def update_task(taskId):
         tasks.update(updated_task)
 
         return {"message":"Task updated successfully", "status":200,"data":updated_task}
+
+#delete tasks
+@app.route('/app/v1/delete_task/<int:taskId>',methods=['DELETE'])
+def delete_task(taskId):
+    data=request.get_json()
+    taskId=tasks.get('taskId')
+    if taskId not in tasks:
+        return jsonify({"error":"user not found"}) , 404
+    
+    del tasks[taskId]
+    return jsonify({"message":"User Deleted Successfully"}), 200
+
+
+
 
 
     
