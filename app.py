@@ -54,3 +54,26 @@ def create_task():
 @app.route('/app/v1/get_tasks/',methods=['GET'])
 def get_task():
     return jsonify(tasks)
+
+#update task status
+@app.route('/app/v1/update_task/<int:taskId>',methods=['PUT'])
+def update_task(taskId):
+    data=request.get_json()
+    taskId=tasks.get('taskId')
+    
+    if "taskId" in tasks and taskId==tasks.get("taskId"):
+        taskName=data.get('taskName')
+        status=data.get('status')
+
+    
+        updated_task={'taskId':taskId,'taskName':taskName,'status':status}
+        tasks.update(updated_task)
+
+        return {"message":"Task updated successfully", "status":200,"data":updated_task}
+
+
+    
+
+
+
+
