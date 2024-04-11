@@ -4,9 +4,7 @@ app = Flask(__name__) #instance of flask
 
 users={'userName':'naomi','password':'admin'}
 tasks={
-        'taskId':1,
-        'taskName':'clean',
-        'status':'complete'
+       1:{'taskName':'clean','status':'complete'}
     }
 
 #ROUTES
@@ -46,13 +44,12 @@ def get_user():
 def create_task():
     data=request.get_json()
 
-    taskId=data.get('taskId')
     taskName=data.get('taskName')
     status=data.get('status')
 
-    new_task={'taskId':taskId,'taskName':taskName,'status':status}
-    tasks.update(new_task)
-    return {"message":"Task successfully added", "status":201, "data":tasks}
+    new_task_id=max(tasks.keys()) + 1 if tasks else 1
+    tasks[new_task_id] = {'taskName':taskName, 'status':status}
+    return jsonify({'message': f'Task {new_task_id} added successfully',"status":201, "data":tasks})
 
 #get tasks
 @app.route('/app/v1/get_tasks/',methods=['GET'])
@@ -63,28 +60,23 @@ def get_task():
 @app.route('/app/v1/update_task/<int:taskId>',methods=['PUT'])
 def update_task(taskId):
     data=request.get_json()
-    taskId=tasks.get('taskId')
+
+    if taskId not in tasks:
+        return jsonify({"error":"task not found"}) , 404
     
-    if "taskId" in tasks and taskId==tasks.get("taskId"):
-        taskName=data.get('taskName')
-        status=data.get('status')
+    tasks[taskId]['taskName'] = data['taskName']
+    tasks[taskId]['status'] = data['status']
 
+    return jsonify({"message":f"Task {taskId} updated successfully", "status":200,"data":tasks})
     
-        updated_task={'taskId':taskId,'taskName':taskName,'status':status}
-        tasks.update(updated_task)
-
-        return {"message":"Task updated successfully", "status":200,"data":updated_task}
-
 #delete tasks
 @app.route('/app/v1/delete_task/<int:taskId>',methods=['DELETE'])
 def delete_task(taskId):
-    data=request.get_json()
-    taskId=tasks.get('taskId')
-    if taskId not in tasks:
-        return jsonify({"error":"user not found"}) , 404
-    
-    del tasks[taskId]
-    return jsonify({"message":"User Deleted Successfully"}), 200
+    if taskId in tasks:
+        tasks.pop(taskId)
+        return jsonify({"message":f"Task {taskId} deleted successfully", "status":200,"data":tasks})
+    else:
+        return jsonify({"error":"task not found"}) , 404
 
 
 
